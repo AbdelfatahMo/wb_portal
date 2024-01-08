@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="portal_my_home" inherit_id="portal.portal_my_home">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Students</t>
+                <t t-set="url" t-value="'/my/students'"/>
+                <t t-set="placeholder_count" t-value="'students_count'"/>
+            </t>
+        </xpath>
+    </template>
+
+    <template id="portal_breadcrumbs" inherit_id="portal.portal_breadcrumbs">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li t-if="page_name == 'students_list'" class="breadcrumb-item">Students</li>
+            <li t-if="page_name == 'student'" class="breadcrumb-item">
+                <a href="/my/students">Students</a>
+            </li>
+        </xpath>
+    </template>
+
+    <template id="wb_student_list_view_portal">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="true"/>
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title" t-value="Students"/>
+            </t>
+            <t t-call="portal.portal_table">
+                <thead>
+                    <tr>
+                        <th class="text-center">Name</th>
+                        <th class="text-center">School</th>
+                        <th class="text-center">Seq</th>
+                        <th class="text-center">Fees</th>
+                    </tr>
+                </thead>
+                <tbady>
+                    <t t-foreach="students" t-as="student">
+                        <tr>
+                            <td class="text-center">
+                                <a t-attf-href="/my/students/#{student.id}">
+                                    <t t-esc="student.name"/>
+                                </a>
+                            </td>
+                            <td class="text-center">
+                                <t t-esc="student.school_id.name"/>
+                            </td>
+                            <td class="text-center">
+                                <t t-esc="student.seq"/>
+                            </td>
+                            <td class="text-center">
+                                <t t-esc="student.fees"/>
+                            </td>
+                        </tr>
+                    </t>
+                </tbady>
+            </t>
+        </t>
+    </template>
+
+    <template id="wb_student_form_view_portal" inherit_id="portal.portal_sidebar">
+        <!-- <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Students</t>
+                <t t-set="url" t-value="'/my/students'"/>
+                <t t-set="placeholder_count" t-value="'students_count'"/>
+            </t>
+        </xpath> -->
+        <xpath expr="//div[hasclass('o_portal_sidebar')]" position="inside">
+            <t class="row mt16" t-if="page_name == 'student'">
+                <section style="background-color: #eee;">
+                    <div class="container py-5">
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="card mb-4">
+                                    <div class="card-body text-center">
+                                        <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar" class="rounded-circle img-fluid" style="width: 150px;"/>
+                                        <h5 class="my-3" t-esc="student.name"></h5>
+                                        <p class="text-muted mb-1">Full Stack Developer</p>
+                                        <p class="text-muted mb-4">Bay Area, San Francisco, CA</p>
+                                        <div class="d-flex justify-content-center mb-2">
+                                            <button type="button" class="btn btn-primary">Follow</button>
+                                            <button type="button" class="btn btn-outline-primary ms-1">Message</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-8">
+                                <div class="card mb-4">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-sm-3">
+                                                <p class="mb-0">Full Name</p>
+                                            </div>
+                                            <div class="col-sm-9">
+                                                <p class="text-muted mb-0">Johnatan Smith</p>
+                                            </div>
+                                        </div>
+                                        <hr/>
+                                        <div class="row">
+                                            <div class="col-sm-3">
+                                                <p class="mb-0">Email</p>
+                                            </div>
+                                            <div class="col-sm-9">
+                                                <p class="text-muted mb-0">example@example.com</p>
+                                            </div>
+                                        </div>
+                                        <hr/>
+                                        <div class="row">
+                                            <div class="col-sm-3">
+                                                <p class="mb-0">Phone</p>
+                                            </div>
+                                            <div class="col-sm-9">
+                                                <p class="text-muted mb-0">(097) 234-5678</p>
+                                            </div>
+                                        </div>
+                                        <hr/>
+                                        <div class="row">
+                                            <div class="col-sm-3">
+                                                <p class="mb-0">Mobile</p>
+                                            </div>
+                                            <div class="col-sm-9">
+                                                <p class="text-muted mb-0">(098) 765-4321</p>
+                                            </div>
+                                        </div>
+                                        <hr/>
+                                        <div class="row">
+                                            <div class="col-sm-3">
+                                                <p class="mb-0">Address</p>
+                                            </div>
+                                            <div class="col-sm-9">
+                                                <p class="text-muted mb-0">Bay Area, San Francisco, CA</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </t>
+        </xpath>
+    </template>
+
+</odoo>
