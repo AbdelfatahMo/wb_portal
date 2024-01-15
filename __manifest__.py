@@ -6,9 +6,7 @@
     'author': 'Abdelfatah mohamad',
     'website': 'abdelfatah.mohamad,99@gmail.com',
     'license': 'LGPL-3',
-    'depends': [
-        'base', 'portal', 'student'
-    ],
+    'depends': ['school', 'school_student', 'portal', 'base'],
     'data': [
         'views/portal_template.xml'
     ],

@@ -15,7 +15,7 @@
         <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
             <li t-if="page_name == 'students_list'" class="breadcrumb-item">Students</li>
             <li t-if="page_name == 'student'" class="breadcrumb-item">
-                <a href="/my/students">Students</a>
+                <a href="/my/students">Students</a> /                <span t-out="student.name"/>
             </li>
         </xpath>
     </template>
@@ -27,34 +27,54 @@
                 <t t-set="title" t-value="Students"/>
             </t>
             <t t-call="portal.portal_table">
-                <thead>
-                    <tr>
-                        <th class="text-center">Name</th>
-                        <th class="text-center">School</th>
-                        <th class="text-center">Seq</th>
-                        <th class="text-center">Fees</th>
-                    </tr>
-                </thead>
-                <tbady>
-                    <t t-foreach="students" t-as="student">
-                        <tr>
-                            <td class="text-center">
-                                <a t-attf-href="/my/students/#{student.id}">
-                                    <t t-esc="student.name"/>
-                                </a>
-                            </td>
-                            <td class="text-center">
-                                <t t-esc="student.school_id.name"/>
-                            </td>
-                            <td class="text-center">
-                                <t t-esc="student.seq"/>
-                            </td>
-                            <td class="text-center">
-                                <t t-esc="student.fees"/>
-                            </td>
+                <t t-foreach="students_group_list" t-as="students_dic">
+
+                    <thead>
+                        <tr t-if="groupby in ('country_id','school_id')">
+                            <th t-if="groupby == 'country_id'"><t t-esc="students_dic[groupby].name"/></th>
+                            <th t-if="groupby == 'school_id'"><t t-esc="students_dic[groupby].name"/></th>
                         </tr>
-                    </t>
-                </tbady>
+                        <tr>
+                            <th class="text-center">Name</th>
+                            <th class="text-center" t-if="groupby != 'school_id'">School</th>
+                            <th class="text-center" t-if="groupby != 'country_id'">Country</th>
+                            <th class="text-center">photo</th>
+                            <th class="text-center">Seq</th>
+                            <th class="text-center">Total fees</th>
+                        </tr>
+                    </thead>
+                    <tbady>
+                        <t t-foreach="students_dic.get('students')" t-as="student">
+                            <tr>
+                                <td class="text-center">
+                                    <a t-attf-href="/my/students/student/#{student.id}">
+                                        <t t-esc="student.name"/>
+                                    </a>
+                                </td>
+                                <td t-if="groupby != 'country_id'" class="text-center">
+                                    <t t-esc="student.country_id.name"/>
+                                </td>
+                                <td t-if="groupby != 'school_id'" class="text-center">
+                                    <t t-esc="student.school_id.name"/>
+                                </td>
+                                <td class="text-center">
+                                    <t t-if="student.student_img">
+                                        <img t-attf-src="data:image/png;base64,{{student.student_img}}" alt="avatar" class="rounded-circle img-fluid" style="width: 60px;height:60px;" />
+                                    </t>
+                                    <t t-else="">
+                                        <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar" class="rounded-circle img-fluid" style="width: 60px;height:60px;"/>
+                                    </t>
+                                </td>
+                                <td class="text-center">
+                                    <t t-esc="student.student_seq"/>
+                                </td>
+                                <td class="text-center">
+                                    <t t-esc="student.total_fees"/>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbady>
+                </t>
             </t>
         </t>
     </template>
@@ -75,13 +95,21 @@
                             <div class="col-lg-4">
                                 <div class="card mb-4">
                                     <div class="card-body text-center">
-                                        <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar" class="rounded-circle img-fluid" style="width: 150px;"/>
+                                        <t t-if="student.student_img">
+                                            <img t-attf-src="data:image/png;base64,{{student.student_img}}" alt="avatar" class="rounded-circle img-fluid" style="width: 150px;" />
+                                        </t>
+                                        <t t-else="">
+                                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar" class="rounded-circle img-fluid" style="width: 150px;"/>
+                                        </t>
                                         <h5 class="my-3" t-esc="student.name"></h5>
                                         <p class="text-muted mb-1">Full Stack Developer</p>
                                         <p class="text-muted mb-4">Bay Area, San Francisco, CA</p>
                                         <div class="d-flex justify-content-center mb-2">
                                             <button type="button" class="btn btn-primary">Follow</button>
                                             <button type="button" class="btn btn-outline-primary ms-1">Message</button>
+                                            <button class="fa fa-download primary-btn">
+                                                <a t-attf-href="/my/students/student/print/#{student.id}">Download</a>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -137,6 +165,12 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <!-- Add chatter to portal form -->
+                    <div class="container py-5">
+                        <t t-call="portal.message_thread">
+                            <t t-set="object" t-value="student"/>
+                        </t>
                     </div>
                 </section>
             </t>
