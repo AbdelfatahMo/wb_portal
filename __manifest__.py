@@ -8,7 +8,7 @@
     'license': 'LGPL-3',
     'depends': ['school', 'school_student', 'portal', 'base'],
     'data': [
-        'views/portal_template.xml'
+        'views/portal_template.xml',
     ],
     # 'demo': [
     #     ''

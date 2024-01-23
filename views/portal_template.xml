@@ -3,10 +3,17 @@
 
     <template id="portal_my_home" inherit_id="portal.portal_my_home">
         <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <!-- <t t-call="portal.portal_docs_entry"> -->
+                <!-- <t t-set="title">Register student</t>
+                <t t-set="url">/new/student</t> -->
+                <a href="/new/student"  class="list-group-item list-group-item-action d-flex align-items-center justify-content-between">
+                    <t t-esc="'Register student'"/>
+                </a>
+            <!-- </t> -->
             <t t-call="portal.portal_docs_entry">
                 <t t-set="title">Students</t>
-                <t t-set="url" t-value="'/my/students'"/>
-                <t t-set="placeholder_count" t-value="'students_count'"/>
+                <t t-set="url" t-value="'/my/students'" />
+                <t t-set="placeholder_count" t-value="'students_count'" />
             </t>
         </xpath>
     </template>
@@ -14,25 +21,30 @@
     <template id="portal_breadcrumbs" inherit_id="portal.portal_breadcrumbs">
         <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
             <li t-if="page_name == 'students_list'" class="breadcrumb-item">Students</li>
+            <li t-if="page_name == 'register_student'" class="breadcrumb-item">Register student</li>
             <li t-if="page_name == 'student'" class="breadcrumb-item">
-                <a href="/my/students">Students</a> /                <span t-out="student.name"/>
+                <a href="/my/students">Students</a> / <span t-out="student.name" />
             </li>
         </xpath>
     </template>
 
     <template id="wb_student_list_view_portal">
         <t t-call="portal.portal_layout">
-            <t t-set="breadcrumbs_searchbar" t-value="true"/>
+            <t t-set="breadcrumbs_searchbar" t-value="true" />
             <t t-call="portal.portal_searchbar">
-                <t t-set="title" t-value="Students"/>
+                <t t-set="title" t-value="Students" />
             </t>
             <t t-call="portal.portal_table">
                 <t t-foreach="students_group_list" t-as="students_dic">
 
                     <thead>
                         <tr t-if="groupby in ('country_id','school_id')">
-                            <th t-if="groupby == 'country_id'"><t t-esc="students_dic[groupby].name"/></th>
-                            <th t-if="groupby == 'school_id'"><t t-esc="students_dic[groupby].name"/></th>
+                            <th t-if="groupby == 'country_id'">
+                                <t t-esc="students_dic[groupby].name" />
+                            </th>
+                            <th t-if="groupby == 'school_id'">
+                                <t t-esc="students_dic[groupby].name" />
+                            </th>
                         </tr>
                         <tr>
                             <th class="text-center">Name</th>
@@ -48,34 +60,157 @@
                             <tr>
                                 <td class="text-center">
                                     <a t-attf-href="/my/students/student/#{student.id}">
-                                        <t t-esc="student.name"/>
+                                        <t t-esc="student.name" />
                                     </a>
                                 </td>
                                 <td t-if="groupby != 'country_id'" class="text-center">
-                                    <t t-esc="student.country_id.name"/>
+                                    <t t-esc="student.country_id.name" />
                                 </td>
                                 <td t-if="groupby != 'school_id'" class="text-center">
-                                    <t t-esc="student.school_id.name"/>
+                                    <t t-esc="student.school_id.name" />
                                 </td>
                                 <td class="text-center">
                                     <t t-if="student.student_img">
                                         <img t-attf-src="data:image/png;base64,{{student.student_img}}" alt="avatar" class="rounded-circle img-fluid" style="width: 60px;height:60px;" />
                                     </t>
                                     <t t-else="">
-                                        <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar" class="rounded-circle img-fluid" style="width: 60px;height:60px;"/>
+                                        <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar" class="rounded-circle img-fluid" style="width: 60px;height:60px;" />
                                     </t>
                                 </td>
                                 <td class="text-center">
-                                    <t t-esc="student.student_seq"/>
+                                    <t t-esc="student.student_seq" />
                                 </td>
                                 <td class="text-center">
-                                    <t t-esc="student.total_fees"/>
+                                    <t t-esc="student.total_fees" />
                                 </td>
                             </tr>
                         </t>
                     </tbady>
                 </t>
             </t>
+        </t>
+    </template>
+
+    <template id="wb_new_student_form_view_portal">
+        <style>
+        </style>
+        <t t-call="portal.portal_layout">
+
+                <t t-foreach="error_list" t-as="error">
+                    <div class="alert alert-danger" role="alert">
+                        <t t-esc="error" class="text-center"/>
+                    </div>
+                </t>
+                <div class="alert alert-success" role="alert" t-if="success">
+                    <t t-esc="success"/>
+                </div>
+            <section class="vh-300">
+                <div class="container py-5 h-10">
+                    <div class="row justify-content-center align-items-center h-10">
+                        <div class="col-12 col-lg-12 col-xl-12">
+                            <div class="card shadow-2-strong card-registration" style="border-radius: 15px;">
+                                <div class="card-body p-12 p-md-5">
+                                    <h3 class="mb-4 pb-2 pb-md-0 mb-md-5">Registration Form</h3>
+                                    <form method="post">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"></input>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-4">
+
+                                                <div class="form-outline">
+                                                    <label class="form-label" for="firstName">First Name</label>
+                                                    <input type="text" name="firstName" id="firstName" class="form-control form-control-lg" />
+                                                </div>
+
+                                            </div>
+                                            <div class="col-md-6 mb-4">
+
+                                                <div class="form-outline">
+                                                    <label class="form-label" for="lastName">Last Name</label>
+                                                    <input type="text" id="lastName" name="lastName" class="form-control form-control-lg" />
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-6 mb-4 d-flex align-items-center">
+
+                                                <div class="form-outline w-100">
+                                                    <label for="birthdayDate" class="form-label">Birthday</label>
+                                                    <input type="date" class="form-control form-control-lg" name="date" id="birthdayDate" />
+                                                </div>
+
+                                            </div>
+                                            <div class="col-md-6 mb-4">
+
+                                                <h6 class="mb-2 pb-1">Gender: </h6>
+
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="gender" id="femaleGender" value="female" />
+                                                    <label class="form-check-label" for="femaleGender">Female</label>
+                                                </div>
+
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="gender" id="maleGender" value="male" />
+                                                    <label class="form-check-label" for="maleGender">Male</label>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-6 mb-4 pb-2">
+
+                                                <div class="form-outline">
+                                                    <label class="form-select-label" for="emailAddress">Email</label>
+                                                    <input type="email" name="email" id="emailAddress" class="form-control form-control-lg" />
+                                                </div>
+
+                                            </div>
+                                            <div class="col-md-6 mb-4 pb-2">
+
+                                                <div class="form-outline">
+                                                    <label class="form-select-label" for="phoneNumber">Phone Number</label>
+                                                    <input type="tel" name="phone" id="phoneNumber" class="form-control form-control-lg" />
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-6 form-outline">
+                                                <label class="form-label select-label" for="school">Choose School</label>
+                                                <select style="width:100%;" class="select form-control-lg" id="school_s" name="school">
+                                                    <t t-foreach="schools" t-as="school">
+                                                        <option t-att-value="school.id">
+                                                            <t t-out="school.name" />
+                                                        </option>
+                                                    </t>
+                                                </select>
+                                            </div>
+                                            <div class="col-6 form-outline">
+                                                <label class="form-label select-label" for="country">Choose Country</label>
+                                                <select style="width:100%;" class="select form-control-lg " name="country" id="country">
+                                                    <t t-foreach="countries" t-as="country">
+                                                        <option t-att-value="country.id">
+                                                            <t t-out="country.name" />
+                                                        </option>
+                                                    </t>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="mt-4 pt-2">
+                                            <input class="btn btn-primary btn-lg" type="submit" value="Submit" />
+                                        </div>
+
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </t>
     </template>
 
@@ -99,9 +234,9 @@
                                             <img t-attf-src="data:image/png;base64,{{student.student_img}}" alt="avatar" class="rounded-circle img-fluid" style="width: 150px;" />
                                         </t>
                                         <t t-else="">
-                                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar" class="rounded-circle img-fluid" style="width: 150px;"/>
+                                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar" class="rounded-circle img-fluid" style="width: 150px;" />
                                         </t>
-                                        <h5 class="my-3" t-esc="student.name"></h5>
+                                        <h5 class="my-3" t-esc="student.name" />
                                         <p class="text-muted mb-1">Full Stack Developer</p>
                                         <p class="text-muted mb-4">Bay Area, San Francisco, CA</p>
                                         <div class="d-flex justify-content-center mb-2">
@@ -125,7 +260,7 @@
                                                 <p class="text-muted mb-0">Johnatan Smith</p>
                                             </div>
                                         </div>
-                                        <hr/>
+                                        <hr />
                                         <div class="row">
                                             <div class="col-sm-3">
                                                 <p class="mb-0">Email</p>
@@ -134,7 +269,7 @@
                                                 <p class="text-muted mb-0">example@example.com</p>
                                             </div>
                                         </div>
-                                        <hr/>
+                                        <hr />
                                         <div class="row">
                                             <div class="col-sm-3">
                                                 <p class="mb-0">Phone</p>
@@ -143,7 +278,7 @@
                                                 <p class="text-muted mb-0">(097) 234-5678</p>
                                             </div>
                                         </div>
-                                        <hr/>
+                                        <hr />
                                         <div class="row">
                                             <div class="col-sm-3">
                                                 <p class="mb-0">Mobile</p>
@@ -152,7 +287,7 @@
                                                 <p class="text-muted mb-0">(098) 765-4321</p>
                                             </div>
                                         </div>
-                                        <hr/>
+                                        <hr />
                                         <div class="row">
                                             <div class="col-sm-3">
                                                 <p class="mb-0">Address</p>
@@ -169,7 +304,7 @@
                     <!-- Add chatter to portal form -->
                     <div class="container py-5">
                         <t t-call="portal.message_thread">
-                            <t t-set="object" t-value="student"/>
+                            <t t-set="object" t-value="student" />
                         </t>
                     </div>
                 </section>

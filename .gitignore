@@ -9,8 +9,7 @@
 .pydevproject
 .settings
 .idea/
-__pycache__/
-/__pycache__/
+**/*/__pycache__
+**/*/__pycache__/
 .vscode/
 __MACOSX/
-prt_report_attachment_preview/
